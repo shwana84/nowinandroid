@@ -21,6 +21,8 @@ import com.google.samples.apps.nowinandroid.configureKotlinAndroid
 import com.google.samples.apps.nowinandroid.configurePrintApksTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.configure
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
@@ -39,7 +41,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationAndroidComponentsExtension> {
                 configurePrintApksTask(this)
             }
+            extensions.configure<JavaPluginExtension> {
+                toolchain {
+                    languageVersion.set(JavaLanguageVersion.of(17))
+                }
+            }
         }
     }
-
 }

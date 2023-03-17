@@ -19,6 +19,8 @@ import com.google.samples.apps.nowinandroid.configureGradleManagedDevices
 import com.google.samples.apps.nowinandroid.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.configure
 
 class AndroidTestConventionPlugin : Plugin<Project> {
@@ -33,6 +35,11 @@ class AndroidTestConventionPlugin : Plugin<Project> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 31
                 configureGradleManagedDevices(this)
+            }
+            extensions.configure<JavaPluginExtension> {
+                toolchain {
+                    languageVersion.set(JavaLanguageVersion.of(17))
+                }
             }
         }
     }

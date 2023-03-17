@@ -27,3 +27,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(project(":core:testing"))
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
