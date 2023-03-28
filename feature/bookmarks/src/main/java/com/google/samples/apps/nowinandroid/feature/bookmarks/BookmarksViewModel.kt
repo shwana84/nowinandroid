@@ -16,6 +16,9 @@
 
 package com.google.samples.apps.nowinandroid.feature.bookmarks
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.samples.apps.nowinandroid.core.data.repository.UserDataRepository
@@ -39,6 +42,9 @@ class BookmarksViewModel @Inject constructor(
     getSaveableNewsResources: GetUserNewsResourcesUseCase,
 ) : ViewModel() {
 
+    var shouldDisplayUndoBookmark by mutableStateOf(false)
+    private var lastRemovedBookmarkId: String? = null
+
     val feedUiState: StateFlow<NewsFeedUiState> = getSaveableNewsResources()
         .filterNot { it.isEmpty() }
         .map { newsResources -> newsResources.filter(UserNewsResource::isSaved) } // Only show bookmarked news resources.
@@ -52,7 +58,23 @@ class BookmarksViewModel @Inject constructor(
 
     fun removeFromSavedResources(newsResourceId: String) {
         viewModelScope.launch {
+            shouldDisplayUndoBookmark = true
+            lastRemovedBookmarkId = newsResourceId
             userDataRepository.updateNewsResourceBookmark(newsResourceId, false)
         }
+    }
+
+    fun undoBookmarkRemoval() {
+        viewModelScope.launch {
+            lastRemovedBookmarkId?.let {
+                userDataRepository.updateNewsResourceBookmark(it, true)
+            }
+        }
+        clearUndoState()
+    }
+
+    fun clearUndoState() {
+        shouldDisplayUndoBookmark = false
+        lastRemovedBookmarkId = null
     }
 }
